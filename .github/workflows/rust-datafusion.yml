@@ -7,7 +7,7 @@ on: [pull_request, push]
 
 jobs:
   build:
-    name: Run in mode${{ matrix.profile }} on ${{ matrix.os }}
+    name: Run in mode ${{ matrix.profile }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -29,9 +29,8 @@ jobs:
       - name: Build
         run: |
           cd RustDataFusion
-          cargo build --${{ matrix.profile }}
+          cargo build --profile ${{ matrix.profile }}
 
       - name: Run
         run: |
-          cd RustDataFusion
-          cargo run --${{ matrix.profile }}
+          cargo run --profile ${{ matrix.profile }}
