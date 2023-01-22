@@ -7,14 +7,20 @@ on: [pull_request, push]
 
 jobs:
   build:
-    name: Run in mode ${{ matrix.profile }} on ${{ matrix.os }}
+    name: Run in mode ${{ matrix.task.mode }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         rust: [stable]
-        profile: [debug, release]
+        task: 
+          - build: cargo build
+            run: cargo run
+            mode: Debug
+          - build: cargo build --release
+            run: cargo run --release
+            mode: Release
     steps:
       - uses: actions/checkout@v3
 
@@ -26,11 +32,12 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Build
+      - name: Build (${{ matrix.task.mode }})
         run: |
           cd RustDataFusion
-          cargo build --profile ${{ matrix.profile }}
+          ${{ matrix.task.build }}
 
-      - name: Run
+      - name: Run (${{ matrix.task.mode }})
         run: |
-          cargo run --profile ${{ matrix.profile }}
+          cd RustDataFusion
+          ${{ matrix.task.run }}
