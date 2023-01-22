@@ -31,6 +31,17 @@ jobs:
           profile: minimal
           override: true
           components: rustfmt, clippy
+      
+      - name: Load cached data
+        id: cached-data
+        uses: actions/cache@v3
+        with:
+          path: data
+          key: data-${{ runner.os }}-${{ hashFiles('**/download-data.sh') }}
+
+      - name: Install dependencies
+        if: steps.cached-data.outputs.cache-hit != 'true'
+        run: ./download-data.sh
 
       - name: Build (${{ matrix.task.mode }})
         run: |
